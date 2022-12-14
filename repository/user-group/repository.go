@@ -23,16 +23,52 @@ func (u *userGroup) UpsertUserGroup(ctx context.Context, request *entity.UpsertU
 			tx.Rollback()
 		}
 	}()
-	err = tx.Delete(userGroup{}, "group_id = ?", request.GroupID).Error
+	err = tx.Delete(userGroup{}, "group_id = ?", request.GroupID).
+		Error
 	if err != nil {
 		return err
 	}
 
-	err = tx.Table(tableName).Create(parseUpsertUserGroupToDto(request)).Error
+	err = tx.Table(tableName).
+		Create(parseUpsertUserGroupToDto(request)).
+		Error
 	if err != nil {
 		return err
 	}
 
 	return tx.Commit().Error
 
+}
+
+func (u *userGroup) GetUserGroupsByCronType(ctx context.Context, cronType entity.CronType) ([]*entity.UserGroup, error) {
+	var userGroups []*UserGroup
+
+	err := u.db.
+		WithContext(ctx).
+		Table(tableName).
+		Find(&userGroups, "cron_type = ?", cronType).Error
+
+	return parseToUserGroupsEntity(userGroups), err
+}
+
+func (u *userGroup) UpdateUserGroupsRank(ctx context.Context, ugs []*entity.UserGroup) error {
+	var err error
+	tx := u.db.WithContext(ctx).Begin()
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	for _, ug := range ugs {
+		err = tx.Table(tableName).
+			Where(ug, "serial = ?", ug.Serial).
+			Update("current_rank", ug.CurrentRank).
+			Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit().Error
 }
