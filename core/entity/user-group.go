@@ -5,9 +5,11 @@ import "github.com/google/uuid"
 type CronType string
 
 const (
-	CronTypeDaily   CronType = "daily"
-	CronTypeWeekly  CronType = "weekly"
-	CronTypeMonthly CronType = "monthly"
+	CronTypeMinutely CronType = "minutely"
+	CronTypeHourly   CronType = "hourly"
+	CronTypeDaily    CronType = "daily"
+	CronTypeWeekly   CronType = "weekly"
+	CronTypeMonthly  CronType = "monthly"
 )
 
 type UpsertUserGroupRequest struct {
@@ -21,4 +23,13 @@ type UpsertUserGroupRequest struct {
 type UserRank struct {
 	Users []string `json:"users"`
 	Rank  int      `json:"rank"`
+}
+
+type UserGroup struct {
+	Serial      uuid.UUID
+	GroupID     string
+	Users       []UserRank
+	CurrentRank int
+	CronType    CronType
+	CreatedBy   string
 }
