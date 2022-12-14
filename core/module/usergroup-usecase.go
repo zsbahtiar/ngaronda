@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zsbahtiar/ngaronda/core/entity"
 	"github.com/zsbahtiar/ngaronda/core/repository"
+	"log"
 )
 
 type userGroup struct {
@@ -13,7 +14,7 @@ type userGroup struct {
 }
 
 type UserGroupUseCase interface {
-	AssignUsersToGroup(ctx context.Context, request *entity.AssignUsersToGroupRequest) error
+	AssignUsersToGroup(ctx context.Context, cronType entity.CronType) error
 	UpsertUserGroup(ctx context.Context, request *entity.UpsertUserGroupRequest) error
 }
 
@@ -27,8 +28,39 @@ func NewUserGroupUseCase(
 	}
 }
 
-func (u *userGroup) AssignUsersToGroup(ctx context.Context, request *entity.AssignUsersToGroupRequest) error {
-	return u.slackRepo.AssignUsersToGroup(ctx, request)
+func (u *userGroup) AssignUsersToGroup(ctx context.Context, cronType entity.CronType) error {
+	userGroups, err := u.
+		userGroupRepo.
+		GetUserGroupsByCronType(ctx, cronType)
+
+	if err != nil {
+		return err
+	}
+	for _, ug := range userGroups {
+		total := len(ug.Users)
+		rank := ug.CurrentRank
+		if total != 1 {
+			if ug.CurrentRank < total {
+				rank++
+			} else if ug.CurrentRank == total {
+				rank = 0
+			}
+			err = u.slackRepo.
+				AssignUsersToGroup(ctx,
+					&entity.AssignUsersToGroupRequest{
+						UserGroupID: ug.GroupID,
+						Users:       ug.Users[rank].Users,
+					})
+			if err != nil {
+				log.Printf("failed to assign users to group slack: %v", err)
+				continue
+			}
+			ug.CurrentRank = rank
+		}
+	}
+
+	return u.userGroupRepo.
+		UpdateUserGroupsRank(ctx, userGroups)
 }
 
 func (u *userGroup) UpsertUserGroup(ctx context.Context, request *entity.UpsertUserGroupRequest) error {
