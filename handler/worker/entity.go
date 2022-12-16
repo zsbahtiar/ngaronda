@@ -7,5 +7,9 @@ type Payload struct {
 type TaskType string
 
 const (
-	UpdateUserGroupMinutely TaskType = "updateUserGroup:minutely"
+	updateUserGroupMinutely TaskType = "updateUserGroup:minutely"
+	updateUserGroupHourly   TaskType = "updateUserGroup:hourly"
+	updateUserGroupDaily    TaskType = "updateUserGroup:daily"
+	updateUserGroupWeekly   TaskType = "updateUserGroup:weekly"
+	updateUserGroupMonthly  TaskType = "updateUserGroup:monthly"
 )

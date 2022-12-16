@@ -17,9 +17,9 @@ func (w *worker) startServer(redis asynq.RedisClientOpt) {
 			},
 		},
 	)
+
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(string(UpdateUserGroupMinutely), w.handleUserGroupMinutely)
-	// ...register other handlers...
+	mux.HandleFunc(string(updateUserGroupMinutely), w.taskHandler.HandleTaskUsersGroup)
 
 	log.Println("start worker server")
 	if err := srv.Run(mux); err != nil {

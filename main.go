@@ -8,6 +8,7 @@ import (
 	"github.com/zsbahtiar/ngaronda/core/module"
 	"github.com/zsbahtiar/ngaronda/handler/api"
 	"github.com/zsbahtiar/ngaronda/handler/worker"
+	"github.com/zsbahtiar/ngaronda/handler/worker/task"
 	"github.com/zsbahtiar/ngaronda/pkg/database"
 	"github.com/zsbahtiar/ngaronda/repository/slack"
 	userGroup "github.com/zsbahtiar/ngaronda/repository/user-group"
@@ -32,6 +33,7 @@ func main() {
 	userGroupRepo := userGroup.NewRepository(db)
 	slackRepo := slack.NewRepository(cfg.SlackBaseURL, cfg.SlackAPIKey, cfg.SlackBotAPIKey)
 	userGroupUsecase := module.NewUserGroupUseCase(slackRepo, userGroupRepo)
+	taskHandler := task.NewTaskHandler(userGroupUsecase)
 
 	userGroupApi := api.NewUerGroupApi(userGroupUsecase)
 
@@ -51,7 +53,7 @@ func main() {
 		}
 	}()
 
-	w := worker.NewWorker(redisAsyncConn, cfg.ScheduleCron, userGroupUsecase)
+	w := worker.NewWorker(redisAsyncConn, cfg.ScheduleCron, taskHandler)
 
 	if err := w.Start(); err != nil {
 		log.Fatal(err)
