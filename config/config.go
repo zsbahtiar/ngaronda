@@ -27,7 +27,11 @@ type Database struct {
 }
 
 type ScheduleCron struct {
-	UpdateUsersGroup string `envconfig:"UPDATE_USERS_GROUP_CRON" default:"* * * * *"`
+	UpdateUsersGroupMinutely string `envconfig:"UPDATE_USERS_GROUP_MINUTELY_CRON" default:"* * * * *"`
+	UpdateUsersGroupHourly   string `envconfig:"UPDATE_USERS_GROUP_HOURLY_CRON" default:"0 * * * *"`
+	UpdateUsersGroupDaily    string `envconfig:"UPDATE_USERS_GROUP_DAILY_CRON" default:"* 9 * * *"`
+	UpdateUsersGroupWeekly   string `envconfig:"UPDATE_USERS_GROUP_WEEKLY_CRON" default:"* 9 * * 1"`
+	UpdateUsersGroupMonthly  string `envconfig:"UPDATE_USERS_GROUP_MONTHLY_CRON" default:"* 9 1 * *"`
 }
 
 func Get() Config {

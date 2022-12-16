@@ -44,4 +44,8 @@ func (w *worker) Start() error {
 // applyRegistry method apply all task on registry to scheduler
 func (w *worker) applyRegistry() {
 	w.updateUsersGroupMinutely()
+	w.updateUsersGroupDaily()
+	w.updateUsersGroupWeekly()
+	w.updateUsersGroupMonthly()
+
 }
