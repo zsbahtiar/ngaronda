@@ -38,24 +38,25 @@ func (u *userGroup) AssignUsersToGroup(ctx context.Context, cronType entity.Cron
 	}
 	for _, ug := range userGroups {
 		total := len(ug.Users)
-		rank := ug.CurrentRank
-		if total != 1 {
-			if ug.CurrentRank < total {
-				rank++
-			} else if ug.CurrentRank == total {
-				rank = 0
+		index := ug.CurrentRank
+		if total > 1 {
+			lastIndex := total - 1
+			if index < lastIndex {
+				index++
+			} else if index == lastIndex {
+				index = 0
 			}
 			err = u.slackRepo.
 				AssignUsersToGroup(ctx,
 					&entity.AssignUsersToGroupRequest{
 						UserGroupID: ug.GroupID,
-						Users:       ug.Users[rank].Users,
+						Users:       ug.Users[index].Users,
 					})
 			if err != nil {
 				log.Printf("failed to assign users to group slack: %v", err)
 				continue
 			}
-			ug.CurrentRank = rank
+			ug.CurrentRank = index
 		}
 	}
 
