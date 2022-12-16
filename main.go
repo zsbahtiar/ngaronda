@@ -30,7 +30,7 @@ func main() {
 
 	db := database.InitMysql(cfg.Database)
 	userGroupRepo := userGroup.NewRepository(db)
-	slackRepo := slack.NewRepository(cfg.SlackBaseURL, cfg.SlackAPIKey)
+	slackRepo := slack.NewRepository(cfg.SlackBaseURL, cfg.SlackAPIKey, cfg.SlackBotAPIKey)
 	userGroupUsecase := module.NewUserGroupUseCase(slackRepo, userGroupRepo)
 
 	userGroupApi := api.NewUerGroupApi(userGroupUsecase)

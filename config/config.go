@@ -6,15 +6,16 @@ import (
 )
 
 type Config struct {
-	SlackBaseURL  string `envconfig:"SLACK_BASE_URL" default:""`
-	SlackAPIKey   string `envconfig:"SLACK_API_KEY" default:""`
-	HTTPPort      string `envconfig:"HTTP_PORT" default:"8080"`
-	Database      Database
-	RedisHostName string `envconfig:"REDIS_HOST_NAME" default:"localhost"`
-	RedisUserName string `envconfig:"REDIS_USER_NAME" default:""`
-	RedisPassword string `envconfig:"REDIS_PASSWORD" default:""`
-	RedisPort     int    `envconfig:"REDIS_PORT" default:"6379"`
-	ScheduleCron  ScheduleCron
+	SlackBaseURL   string `envconfig:"SLACK_BASE_URL" default:""`
+	SlackAPIKey    string `envconfig:"SLACK_API_KEY" default:""`
+	SlackBotAPIKey string `envconfig:"SLACK_BOT_API_KEY" default:""`
+	HTTPPort       string `envconfig:"HTTP_PORT" default:"8080"`
+	Database       Database
+	RedisHostName  string `envconfig:"REDIS_HOST_NAME" default:"localhost"`
+	RedisUserName  string `envconfig:"REDIS_USER_NAME" default:""`
+	RedisPassword  string `envconfig:"REDIS_PASSWORD" default:""`
+	RedisPort      int    `envconfig:"REDIS_PORT" default:"6379"`
+	ScheduleCron   ScheduleCron
 }
 
 type Database struct {
