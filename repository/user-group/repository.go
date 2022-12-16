@@ -62,7 +62,7 @@ func (u *userGroup) UpdateUserGroupsRank(ctx context.Context, ugs []*entity.User
 
 	for _, ug := range ugs {
 		err = tx.Table(tableName).
-			Where(ug, "serial = ?", ug.Serial).
+			Where("serial = ?", ug.Serial).
 			Update("current_rank", ug.CurrentRank).
 			Error
 		if err != nil {
